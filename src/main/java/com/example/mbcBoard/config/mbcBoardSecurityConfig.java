@@ -21,7 +21,7 @@ public class mbcBoardSecurityConfig {
 			.cors(cors -> {});
 		
 		http.authorizeHttpRequests((authorize)->
-			authorize.requestMatchers("/auth/**","/","/img/**","/js/**","/oauth/**")
+			authorize.requestMatchers("/auth/**","/","/img/**","/js/**","/oauth/**","/message/**")
 					 .permitAll()
 					 .anyRequest()
 					 .authenticated()
