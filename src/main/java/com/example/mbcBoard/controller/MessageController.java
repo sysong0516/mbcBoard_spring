@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.mbcBoard.domain.MessageDTO;
-import com.example.mbcBoard.domain.ResponseDTO;
+import com.example.mbcBoard.domain.ResponseMessageDTO;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.service.MessageService;
@@ -26,56 +26,56 @@ public class MessageController {
 	
 	@ResponseStatus(HttpStatus.OK)
 	@PostMapping("/message")
-	public ResponseDTO<?> sendMessage(@RequestBody MessageDTO messageDTO){
+	public ResponseMessageDTO<?> sendMessage(@RequestBody MessageDTO messageDTO){
 		// 임의로 유저 정보를 넣음, JWT 도입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
 		User user = userRepository.findById(2).orElseThrow(()->{
 			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
 		});
 		messageDTO.setSenderName(user.getUsername());
 		
-		return new ResponseDTO<>("성공","쪽지를 보냈습니다.",messageService.write(messageDTO));
+		return new ResponseMessageDTO<>("성공","쪽지를 보냈습니다.",messageService.write(messageDTO));
 	}
 	
 	
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/messages/received")
-	public ResponseDTO<?> getReceivedMessage(){
+	public ResponseMessageDTO<?> getReceivedMessage(){
 		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
 		User user = userRepository.findById(14).orElseThrow(()->{
 			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
 		});
 		
-		return new ResponseDTO<>("성공","받은 쪽지를 불러왔습니다.",messageService.receivedMessage(user));
+		return new ResponseMessageDTO<>("성공","받은 쪽지를 불러왔습니다.",messageService.receivedMessage(user));
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@DeleteMapping("/messages/received/{id}")
-	public ResponseDTO<?> deleteReceiverMessage(@PathVariable("id") Integer id){
+	public ResponseMessageDTO<?> deleteReceiverMessage(@PathVariable("id") Integer id){
 		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
 		User user = userRepository.findById(1).orElseThrow(()->{
 			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
 		});
 		
-		return new ResponseDTO<>("삭제 성공","받은 쪽지인,"+id+"번 쪽지를 삭제했습니다.",messageService.deleteMessageByReceiver(id, user));
+		return new ResponseMessageDTO<>("삭제 성공","받은 쪽지인,"+id+"번 쪽지를 삭제했습니다.",messageService.deleteMessageByReceiver(id, user));
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/messages/sent")
-	public ResponseDTO<?> getSentMessage(){
+	public ResponseMessageDTO<?> getSentMessage(){
 		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
 		User user = userRepository.findById(1).orElseThrow(()->{
 			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
 		});
-		return new ResponseDTO<>("성공", "보낸 쪽지를 불러왔습니다.", messageService.sentMessage(user));
+		return new ResponseMessageDTO<>("성공", "보낸 쪽지를 불러왔습니다.", messageService.sentMessage(user));
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@DeleteMapping("/messages/sent/{id}")
-	public ResponseDTO<?> deleteSentMessage(@PathVariable("id") Integer id){
+	public ResponseMessageDTO<?> deleteSentMessage(@PathVariable("id") Integer id){
 		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
 		User user = userRepository.findById(1).orElseThrow(()->{
 			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
 		});
-		return new ResponseDTO<>("삭제 성공","보낸 쪽지인,"+id+"번 쪽지를 삭제했습니다.",messageService.deleteMessageBySender(id, user));
+		return new ResponseMessageDTO<>("삭제 성공","보낸 쪽지인,"+id+"번 쪽지를 삭제했습니다.",messageService.deleteMessageBySender(id, user));
 	}
 }
