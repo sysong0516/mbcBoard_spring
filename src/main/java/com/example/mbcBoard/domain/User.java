@@ -2,6 +2,8 @@ package com.example.mbcBoard.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +27,9 @@ public class User {
 	
 	@Column(length = 100)
 	private String password; // 비밀번호
+	
+	@Enumerated(EnumType.STRING)
+	private RoleType role;
 	
 	@Column(nullable = false, length = 100)
 	private String email; // 이메일
