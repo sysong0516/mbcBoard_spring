@@ -17,6 +17,7 @@ import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.security.UserDetailsImpl;
 import com.example.mbcBoard.service.MessageService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
