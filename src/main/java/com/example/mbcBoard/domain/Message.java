@@ -23,7 +23,7 @@ public class Message {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id; // 회원번호
+	private int id; // 메시지번호
 	
 	@Column(nullable = false)
 	private String title; // 메세지 제목
@@ -41,7 +41,7 @@ public class Message {
 	@JoinColumn(name = "sender_id") // sender_id(엔티티)랑 연관 (이해 필요)
 	@OnDelete(action = OnDeleteAction.NO_ACTION) //연관 된 엔티티가 삭제 될 때 어떤 동작을 할지 정의
 	// 												(작성자 혹은 수신자가 계정을 삭제하면 같이 지우기 위함)
-	private User sender; // 보낸 메세지 
+	private User sender; // 보낸 유저
 	
 	@ManyToOne(fetch = FetchType.LAZY) // message(N):id(1) + 지연로딩
 	@JoinColumn(name = "receiver_id") // recevier_id(엔티티)랑 연관

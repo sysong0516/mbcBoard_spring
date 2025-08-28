@@ -44,7 +44,7 @@ public class MessageController {
 	@GetMapping("/messages/received")
 	public ResponseMessageDTO<?> getReceivedMessage(Authentication authentication){
 		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
-		User user = userRepository.findById(14).orElseThrow(()->{
+		User user = userRepository.findById(3).orElseThrow(()->{
 			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
 		});
 		
