@@ -69,8 +69,8 @@ public class MessageService {
 	
 	// 받은 편지 삭제
 	@Transactional
-	public Object deleteMessageByReceiver(MessageDTO messageDTO, User user) {
-		Message message = messageRepository.findById(messageDTO.getId()).get();
+	public Object deleteMessageByReceiver(Integer id, User user) {
+		Message message = messageRepository.findById(id).get();
 		message.deleteByReceiver(); // 받은 사람에게 메세지 삭제
 		if(message.isDeleted()) {
 			//받은 사람과 보낸 사람 모두 삭제했으면, 데이터 베이스에서 삭제 요청
@@ -99,8 +99,8 @@ public class MessageService {
 	
 	// 보낸 편지 삭제
 	@Transactional
-	public Object deleteMessageBySender(MessageDTO messageDTO, User user) {
-		Message message = messageRepository.findById(messageDTO.getId()).get();
+	public Object deleteMessageBySender(Integer id, User user) {
+		Message message = messageRepository.findById(id).get();
 		message.deleteBySender(); // 받은 사람에게 메세지 삭제
 		
 			if(message.isDeleted()) {
