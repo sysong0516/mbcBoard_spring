@@ -40,7 +40,7 @@ public class mbcBoardSecurityConfig {
 				eh.authenticationEntryPoint(authEntryPoint)
 			)
 			.authorizeHttpRequests(auth -> 
-				auth.requestMatchers("/login", "/signup").permitAll()
+				auth.requestMatchers("/login", "/signup","/messages/received").permitAll()
 					.requestMatchers(HttpMethod.GET,"/unnamed", "/post").permitAll()
 				    .anyRequest().authenticated()
 			);
