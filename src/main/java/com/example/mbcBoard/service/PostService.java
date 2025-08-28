@@ -57,7 +57,7 @@ public class PostService {
 			case "content" :
 				return postRepository.findByContentContaining(keyword, pageable);
 			case "username" :
-				return postRepository.findByUsernameContaining(keyword, pageable);
+				return postRepository.findByUser_UsernameContaining(keyword, pageable);
 			default:
 				return Page.empty();
 		}

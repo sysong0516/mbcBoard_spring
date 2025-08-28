@@ -12,5 +12,5 @@ public interface PostRepository extends JpaRepository<Post, Integer>{
 	// select ... where id like '%?%'
 	Page<Post> findByTitleContaining(String keyword, Pageable pageable);
 	Page<Post> findByContentContaining(String keyword, Pageable pageable);
-	Page<Post> findByUsernameContaining(String keyword, Pageable pageable);
+	Page<Post> findByUser_UsernameContaining(String keyword, Pageable pageable);
 }
