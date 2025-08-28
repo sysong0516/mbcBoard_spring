@@ -42,7 +42,8 @@ public class mbcBoardSecurityConfig {
 			.authorizeHttpRequests(auth -> 
 				auth.requestMatchers("/login", "/signup","/search").permitAll()
 					.requestMatchers(HttpMethod.GET,"/unnamed", "/post").permitAll()
-				    .anyRequest().authenticated()
+					.requestMatchers("/ws/**").permitAll()
+					.anyRequest().authenticated()
 			);
 		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 		
@@ -54,6 +55,7 @@ public class mbcBoardSecurityConfig {
 		config.setAllowedOrigins(List.of("http://localhost:5173"));
 		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
 		config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+		config.setAllowCredentials(true);
 		
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
