@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,8 +27,8 @@ public class PostController {
 	private PostService postService;
 	
 	@PostMapping("/post/write") 
-	public ResponseEntity<?> insertPost(@RequestBody Post post){
-		postService.insertPost(post);
+	public ResponseEntity<?> insertPost(@RequestBody Post post, Authentication auth){
+		postService.insertPost(post,auth);
 		
 		return new ResponseEntity<>("게시글 등록 완료",HttpStatus.OK);
 	}

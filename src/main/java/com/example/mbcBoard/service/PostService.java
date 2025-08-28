@@ -5,11 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.mbcBoard.domain.Post;
+import com.example.mbcBoard.domain.User;
+import com.example.mbcBoard.domain.UserDTO;
 import com.example.mbcBoard.repository.PostRepository;
+import com.example.mbcBoard.security.SecurityUtil;
 
 @Service
 public class PostService {
@@ -17,7 +21,14 @@ public class PostService {
 	@Autowired
 	private PostRepository postRepository;
 	
-	public void insertPost(Post post) {
+	@Autowired
+	private SecurityUtil securityUtil;
+	
+	public void insertPost(Post post, Authentication auth) {
+		UserDTO dto = securityUtil.getCurrentUser(auth);
+		User user = new User();
+		user.setId(dto.getId());
+		post.setUser(user);
 		postRepository.save(post);
 	}
 	
