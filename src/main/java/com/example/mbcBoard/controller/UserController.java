@@ -1,5 +1,8 @@
 package com.example.mbcBoard.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -7,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +22,7 @@ import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.jwt.JwtService;
 import com.example.mbcBoard.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,13 +37,22 @@ public class UserController {
 	private final AuthenticationManager authenticationManager;
 	
 	@PostMapping("/signup")
-	public ResponseDTO<?> insertUser(@RequestBody User member){
+	public ResponseEntity<?> insertUser(@Valid @RequestBody User member, BindingResult bindingResult){
+		
+		if (bindingResult.hasErrors()) {
+			Map<String, String> errorMap = new HashMap<>();
+
+			for (FieldError error : bindingResult.getFieldErrors()) {
+				errorMap.put(error.getField(), error.getDefaultMessage());
+			}
+			return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+		}
 		
 		member.setRole(RoleType.USER);
 		
 		userService.insertUser(member);
 		
-		return new ResponseDTO<>(HttpStatus.OK.value(), "가입성공");
+		return new ResponseEntity<>("가입성공",HttpStatus.OK);
 	}
 	
 	@PostMapping("/login")
