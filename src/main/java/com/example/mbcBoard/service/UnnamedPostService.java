@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.mbcBoard.domain.UnnamedPost;
 import com.example.mbcBoard.repository.UnnamedPostRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UnnamedPostService {
 	
@@ -25,8 +27,11 @@ public class UnnamedPostService {
 		return unnamedPostRepository.findAll(pageable);
 	}
 	
+	@Transactional
 	public UnnamedPost getBoard(int id) {
-		return unnamedPostRepository.findById(id).get();
+		UnnamedPost board = unnamedPostRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없십니다."));
+		board.setCnt(board.getCnt()+1);
+		return board;
 	}
 	
 }

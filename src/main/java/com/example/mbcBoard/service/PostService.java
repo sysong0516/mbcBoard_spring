@@ -15,6 +15,8 @@ import com.example.mbcBoard.domain.UserDTO;
 import com.example.mbcBoard.repository.PostRepository;
 import com.example.mbcBoard.security.SecurityUtil;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class PostService {
 	
@@ -38,16 +40,19 @@ public class PostService {
 		
 	}
 	
+	@Transactional
 	public Post getPost(int id) {
-		return postRepository.findById(id).get();
+		Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+		post.setCnt(post.getCnt() + 1);
+		return post;
 	}
 	
 	@Transactional
 	public void updatePost(Post post) {
 		Post update = getPost(post.getId());
 		
-		update.setTitle(update.getTitle());
-		update.setContent(update.getContent());
+		update.setTitle(post.getTitle());
+		update.setContent(post.getContent());
 		postRepository.save(update);
 	}
 	

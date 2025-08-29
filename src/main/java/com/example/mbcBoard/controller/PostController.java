@@ -47,7 +47,7 @@ public class PostController {
 	}
 	
 	@PutMapping("/post/modify/{id}")
-	public ResponseEntity<?> updatePost(@RequestBody Post post) {
+	public ResponseEntity<?> updatePost(@RequestBody Post post, @PathVariable int id) {
 		postService.updatePost(post);
 		return new ResponseEntity<>("게시물 수정 완료", HttpStatus.OK);
 	}
