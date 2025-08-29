@@ -26,14 +26,13 @@ public class MessageService {
 		// 흐름 파악 필요 + 이해 필요
 		User receiver = userRepository.findByUsername(messageDTO.getReceiverName())
 				.orElseThrow(()-> new IllegalArgumentException("수신자 유저를 찾을 수 없습니다."));
-		User sender = userRepository.findByUsername(messageDTO.getSenderName())
-				.orElseThrow(() -> new IllegalArgumentException("발신자 유저를 찾을 수 없습니다."));
+//		User sender = userRepository.findByUsername(messageDTO.getSenderName())
+//				.orElseThrow(() -> new IllegalArgumentException("발신자 유저를 찾을 수 없습니다."));
 		
 		Message message = new Message(); // 객체를 만들고 변수에 저장
 		message.setReceiver(receiver); 
-		message.setSender(sender);
+		message.setSender(messageDTO.getSender());
 		
-		message.setTitle(messageDTO.getTitle());
 		message.setContent(messageDTO.getContent());
 		message.setDeletedByReceiver(false);
 		message.setDeletedBySender(false);

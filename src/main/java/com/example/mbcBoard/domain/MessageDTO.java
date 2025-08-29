@@ -1,5 +1,7 @@
 package com.example.mbcBoard.domain;
 
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,18 +12,16 @@ import lombok.NoArgsConstructor;
 public class MessageDTO {
 
 	private int id;
-	private String title;
 	private String content;
-	private String senderName;
+	private User sender;
 	private String receiverName;
 	
 	public static MessageDTO toDTO(Message message) {
 		// MessageDTO에 Message 엔티티를 참조 한 title,content 등 반환(이해 필요)
 		return new MessageDTO(
 				message.getId(),
-				message.getTitle(),
 				message.getContent(),
-				message.getSender().getUsername(),
+				message.getSender(),
 				message.getReceiver().getUsername()
 		);
 	}
