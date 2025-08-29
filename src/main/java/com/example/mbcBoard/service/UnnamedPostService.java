@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.mbcBoard.domain.Post;
 import com.example.mbcBoard.domain.UnnamedPost;
 import com.example.mbcBoard.repository.UnnamedPostRepository;
 
@@ -32,6 +33,13 @@ public class UnnamedPostService {
 		UnnamedPost board = unnamedPostRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없십니다."));
 		board.setCnt(board.getCnt()+1);
 		return board;
+	}
+	
+	public UnnamedPost getLikes(int id) {
+		UnnamedPost unlike = unnamedPostRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+		unlike.setLikes(unlike.getLikes()+1);
+		unnamedPostRepository.save(unlike);
+		return unlike;
 	}
 	
 }

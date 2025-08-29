@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.mbcBoard.domain.Post;
 import com.example.mbcBoard.domain.UnnamedPost;
 import com.example.mbcBoard.service.UnnamedPostService;
 
@@ -38,6 +39,12 @@ public class UnnamedController {
 	public ResponseEntity<?> getBoard(@PathVariable int id) {
 		UnnamedPost unnamedPost = unnamedPostService.getBoard(id);
 		return new  ResponseEntity<>(unnamedPost, HttpStatus.OK);
+	}
+	
+	@GetMapping("/boardlike")
+	public ResponseEntity<?> getPostLike(int id) {
+		UnnamedPost unnamedlike = unnamedPostService.getLikes(id);
+		return new ResponseEntity<>(unnamedlike,HttpStatus.OK);
 	}
 	
 	

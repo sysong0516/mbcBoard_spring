@@ -60,6 +60,13 @@ public class PostService {
 		postRepository.deleteById(id);
 	}
 	
+	public Post getLikes(int id) {
+		Post postLikes = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+		postLikes.setLikes(postLikes.getLikes()+1);
+		postRepository.save(postLikes);
+		return postLikes;
+	}
+	
 	public Page<Post> searchPost(String type, String keyword, int page, int size) {
 		// PageRequest : 데이터를 페이지 단위로 검색하고 결과를 제어하는데 사용하는 객체
 		// page : 몇 번째 페이지를 요청하는 지

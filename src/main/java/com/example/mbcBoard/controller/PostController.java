@@ -46,16 +46,22 @@ public class PostController {
 		return new ResponseEntity<>(post,HttpStatus.OK);
 	}
 	
-	@PutMapping("/post/modify/{id}")
-	public ResponseEntity<?> updatePost(@RequestBody Post post, @PathVariable int id) {
-		postService.updatePost(post);
-		return new ResponseEntity<>("게시물 수정 완료", HttpStatus.OK);
+	@GetMapping("/postlike")
+	public ResponseEntity<?> getPostLike(int id) {
+		Post post = postService.getLikes(id);
+		return new ResponseEntity<>(post,HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/post/{id}")
-	public ResponseEntity<?> deletePost(@PathVariable int id) {
+	@PutMapping("/post/modify")
+	public ResponseEntity<?> updatePost(@RequestBody Post post) {
+		postService.updatePost(post);
+		return new ResponseEntity<>("수정 완료했습니다.", HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/post")
+	public ResponseEntity<?> deletePost(int id) {
 		postService.deletePost(id);
-		return new ResponseEntity<>(id +"번 게시글 삭제 완료", HttpStatus.OK);
+		return new ResponseEntity<>("삭제 완료했습니다.", HttpStatus.OK);
 	}
 	
 	@GetMapping("/search")
