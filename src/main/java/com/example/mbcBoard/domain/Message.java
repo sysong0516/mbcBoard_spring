@@ -26,9 +26,6 @@ public class Message {
 	private int id; // 메시지번호
 	
 	@Column(nullable = false)
-	private String title; // 메세지 제목
-	
-	@Column(nullable = false)
 	private String content; // 메세지 내용
 	
 	@Column(nullable = false)
