@@ -1,5 +1,8 @@
 package com.example.mbcBoard.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,7 +10,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,8 +30,8 @@ public class PostController {
 	private PostService postService;
 	
 	@PostMapping("/post/write") 
-	public ResponseEntity<?> insertPost(@RequestBody Post post){
-		postService.insertPost(post);
+	public ResponseEntity<?> insertPost(@RequestBody Post post, Authentication auth){
+		postService.insertPost(post,auth);
 		
 		return new ResponseEntity<>("게시글 등록 완료",HttpStatus.OK);
 	}
@@ -40,22 +43,37 @@ public class PostController {
 	}
 	
 	@GetMapping("/post/{id}")
-	public ResponseEntity<?> getPost(@PathVariable int id){
+	public ResponseEntity<?> getPost(@PathVariable int id, Authentication auth){
 		Post post = postService.getPost(id);
-		
+		boolean isOwer = postService.authPost(auth, post);
+		Map<String,Object> postUser = new HashMap<>();
+		postUser.put("post",post);
+		postUser.put("isOwer",isOwer);
+		return new ResponseEntity<>(postUser,HttpStatus.OK);
+	}
+	
+	@GetMapping("/postlike")
+	public ResponseEntity<?> getPostLike(int id) {
+		Post post = postService.getLikes(id);
 		return new ResponseEntity<>(post,HttpStatus.OK);
 	}
 	
-	@PutMapping("/post/modify/{id}")
-	public ResponseEntity<?> updatePost(@RequestBody Post post) {
-		postService.updatePost(post);
-		return new ResponseEntity<>("게시물 수정 완료", HttpStatus.OK);
+	@PostMapping("/authpost")
+	public boolean authPost(@RequestBody Post post, Authentication auth) {
+		
+		return postService.authPost(auth, post);
 	}
 	
-	@DeleteMapping("/post/{id}")
-	public ResponseEntity<?> deletePost(@PathVariable int id) {
+	@PutMapping("/post/modify")
+	public ResponseEntity<?> updatePost(@RequestBody Post post) {
+		postService.updatePost(post);
+		return new ResponseEntity<>("수정 완료했습니다", HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/post")
+	public ResponseEntity<?> deletePost(int id) {
 		postService.deletePost(id);
-		return new ResponseEntity<>(id +"번 게시글 삭제 완료", HttpStatus.OK);
+		return new ResponseEntity<>("게시글 삭제 완료", HttpStatus.OK);
 	}
 	
 	@GetMapping("/search")
