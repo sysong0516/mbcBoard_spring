@@ -40,24 +40,37 @@ public class PostService {
 		
 	}
 	
+	@Transactional(readOnly = true)
+	public Post findPost(int id) {
+		return postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+	}
+	
 	@Transactional
 	public Post getPost(int id) {
-		Post post = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+		Post post = findPost(id);
 		post.setCnt(post.getCnt() + 1);
 		return post;
 	}
 	
+	public boolean authPost(Authentication auth, Post post) {
+		UserDTO dto = securityUtil.getCurrentUser(auth);
+		return post.getUser().getId() == dto.getId();
+	}
+	
 	@Transactional
 	public void updatePost(Post post) {
-		Post update = getPost(post.getId());
-		
+		Post update = findPost(post.getId());
+
 		update.setTitle(post.getTitle());
 		update.setContent(post.getContent());
 		postRepository.save(update);
+
 	}
 	
-	public void deletePost(int id) {
-		postRepository.deleteById(id);
+	@Transactional
+	public void deletePost(int id) {				        
+	    postRepository.deleteById(id);	      
+		
 	}
 	
 	public Post getLikes(int id) {

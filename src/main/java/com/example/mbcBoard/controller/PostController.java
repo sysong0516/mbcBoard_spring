@@ -1,5 +1,8 @@
 package com.example.mbcBoard.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,10 +43,13 @@ public class PostController {
 	}
 	
 	@GetMapping("/post/{id}")
-	public ResponseEntity<?> getPost(@PathVariable int id){
+	public ResponseEntity<?> getPost(@PathVariable int id, Authentication auth){
 		Post post = postService.getPost(id);
-		
-		return new ResponseEntity<>(post,HttpStatus.OK);
+		boolean isOwer = postService.authPost(auth, post);
+		Map<String,Object> postUser = new HashMap<>();
+		postUser.put("post",post);
+		postUser.put("isOwer",isOwer);
+		return new ResponseEntity<>(postUser,HttpStatus.OK);
 	}
 	
 	@GetMapping("/postlike")
@@ -52,16 +58,22 @@ public class PostController {
 		return new ResponseEntity<>(post,HttpStatus.OK);
 	}
 	
+	@PostMapping("/authpost")
+	public boolean authPost(@RequestBody Post post, Authentication auth) {
+		
+		return postService.authPost(auth, post);
+	}
+	
 	@PutMapping("/post/modify")
 	public ResponseEntity<?> updatePost(@RequestBody Post post) {
 		postService.updatePost(post);
-		return new ResponseEntity<>("수정 완료했습니다.", HttpStatus.OK);
+		return new ResponseEntity<>("수정 완료했습니다", HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/post")
 	public ResponseEntity<?> deletePost(int id) {
 		postService.deletePost(id);
-		return new ResponseEntity<>("삭제 완료했습니다.", HttpStatus.OK);
+		return new ResponseEntity<>("게시글 삭제 완료", HttpStatus.OK);
 	}
 	
 	@GetMapping("/search")
