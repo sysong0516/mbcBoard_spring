@@ -1,6 +1,7 @@
 package com.example.mbcBoard.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,4 +86,5 @@ public class PostController {
 	){
 		return postService.searchPost(type, keyword, page, size);
 	}
+	
 }
