@@ -1,9 +1,12 @@
 package com.example.mbcBoard.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import com.example.mbcBoard.domain.MessageDTO;
 import com.example.mbcBoard.domain.ResponseMessageDTO;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.domain.UserDTO;
+import com.example.mbcBoard.repository.MessageRepository;
 import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.security.SecurityUtil;
 import com.example.mbcBoard.security.UserDetailsImpl;
@@ -29,10 +33,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class MessageController {
 
+
 	private final MessageService messageService;
 	private final UserRepository userRepository;
 	private final SecurityUtil securityUtil;
-	
+
 	@ResponseStatus(HttpStatus.CREATED) //성공 시 200번 보다는 201번이 더 적절
 	@PostMapping("/message")
 	public ResponseMessageDTO<?> sendMessage(@RequestBody MessageDTO messageDTO, Authentication auth){
@@ -52,44 +57,39 @@ public class MessageController {
 	
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/messages/received")
-	public ResponseMessageDTO<?> getReceivedMessage(MessageDTO messageDTO, Authentication auth){
+	public ResponseEntity<?> getReceivedMessage(Authentication auth){
 		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
 		UserDTO dto = securityUtil.getCurrentUser(auth);
 		
 		User receiver = userRepository.findById(dto.getId()).get();
 		
 		
-		return new ResponseMessageDTO<>("성공","받은 쪽지를 불러왔습니다.",messageService.receivedMessage(receiver));
+		return new ResponseEntity<>(messageService.receivedMessage(receiver),HttpStatus.OK);
 	}
 	
-	@ResponseStatus(HttpStatus.OK)
-	@DeleteMapping("/messages/received/{id}")
-	public ResponseMessageDTO<?> deleteReceiverMessage(@PathVariable("id") Integer id){
-		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
-		User user = userRepository.findById(1).orElseThrow(()->{
-			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
-		});
-		
-		return new ResponseMessageDTO<>("삭제 성공","받은 쪽지인,"+id+"번 쪽지를 삭제했습니다.",messageService.deleteMessageByReceiver(id, user));
-	}
 	
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping("/messages/sent")
-	public ResponseMessageDTO<?> getSentMessage(){
+	public ResponseEntity<?> getSentMessage(Authentication auth){
 		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
-		User user = userRepository.findById(1).orElseThrow(()->{
-			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
-		});
-		return new ResponseMessageDTO<>("성공", "보낸 쪽지를 불러왔습니다.", messageService.sentMessage(user));
+		UserDTO dto = securityUtil.getCurrentUser(auth);
+		
+		User sender = userRepository.findById(dto.getId()).get();
+		
+		return new ResponseEntity<>(messageService.sentMessage(sender),HttpStatus.OK);
 	}
 	
 	@ResponseStatus(HttpStatus.OK)
-	@DeleteMapping("/messages/sent/{id}")
-	public ResponseMessageDTO<?> deleteSentMessage(@PathVariable("id") Integer id){
-		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함
-		User user = userRepository.findById(1).orElseThrow(()->{
-			return new IllegalArgumentException("유저를 찾을 수 없습니다.");
-		});
-		return new ResponseMessageDTO<>("삭제 성공","보낸 쪽지인,"+id+"번 쪽지를 삭제했습니다.",messageService.deleteMessageBySender(id, user));
+	@DeleteMapping("/messages/delete/{who}")
+	public ResponseEntity<?> deleteByMessage(@RequestBody List<Integer> id,@PathVariable String who, Authentication auth ){
+		// 임의로 유저 정보를 넣었지만, JWT 고입하고 현재 로그인 된 유저의 정보를 넘겨줘야 함 
+		// 컨트롤러로 id 받는 것 까지 함 
+		
+		for(Integer i:id) {
+			messageService.deleteMessageByTarget(i,who);			
+		}
+		
+		
+		return new ResponseEntity<>("삭제 성공",HttpStatus.OK);
 	}
 }
