@@ -5,11 +5,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.mbcBoard.domain.Post;
+import com.example.mbcBoard.domain.User;
+import com.example.mbcBoard.domain.UserDTO;
 import com.example.mbcBoard.repository.PostRepository;
+import com.example.mbcBoard.security.SecurityUtil;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PostService {
@@ -17,7 +23,14 @@ public class PostService {
 	@Autowired
 	private PostRepository postRepository;
 	
-	public void insertPost(Post post) {
+	@Autowired
+	private SecurityUtil securityUtil;
+	
+	public void insertPost(Post post, Authentication auth) {
+		UserDTO dto = securityUtil.getCurrentUser(auth);
+		User user = new User();
+		user.setId(dto.getId());
+		post.setUser(user);
 		postRepository.save(post);
 	}
 	
@@ -27,21 +40,44 @@ public class PostService {
 		
 	}
 	
+	@Transactional(readOnly = true)
+	public Post findPost(int id) {
+		return postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+	}
+	
+	@Transactional
 	public Post getPost(int id) {
-		return postRepository.findById(id).get();
+		Post post = findPost(id);
+		post.setCnt(post.getCnt() + 1);
+		return post;
+	}
+	
+	public boolean authPost(Authentication auth, Post post) {
+		UserDTO dto = securityUtil.getCurrentUser(auth);
+		return post.getUser().getId() == dto.getId();
 	}
 	
 	@Transactional
 	public void updatePost(Post post) {
-		Post update = getPost(post.getId());
-		
-		update.setTitle(update.getTitle());
-		update.setContent(update.getContent());
+		Post update = findPost(post.getId());
+
+		update.setTitle(post.getTitle());
+		update.setContent(post.getContent());
 		postRepository.save(update);
+
 	}
 	
-	public void deletePost(int id) {
-		postRepository.deleteById(id);
+	@Transactional
+	public void deletePost(int id) {				        
+	    postRepository.deleteById(id);	      
+		
+	}
+	
+	public Post getLikes(int id) {
+		Post postLikes = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+		postLikes.setLikes(postLikes.getLikes()+1);
+		postRepository.save(postLikes);
+		return postLikes;
 	}
 	
 	public Page<Post> searchPost(String type, String keyword, int page, int size) {

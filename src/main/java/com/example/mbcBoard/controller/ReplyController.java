@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.mbcBoard.domain.Reply;
@@ -29,6 +30,15 @@ public class ReplyController {
 		replyService.insertReply(reply, postId, userId);
 		
 		return new ResponseEntity<>("등록완료", HttpStatus.OK);
+	}
+	
+	@PutMapping("/reply/{postId}")
+	public ResponseEntity<?> updateReply(@RequestBody Reply reply, @PathVariable int postId, Authentication auth){
+		
+		int userId=securityUtil.getCurrentUser(auth).getId();
+		replyService.insertReply(reply, postId, userId);
+		
+		return new ResponseEntity<>("수정완료", HttpStatus.OK);
 	}
 	
 }

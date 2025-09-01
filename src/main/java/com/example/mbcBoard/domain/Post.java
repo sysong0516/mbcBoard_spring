@@ -47,7 +47,7 @@ public class Post {
 	private int likes;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "userid")
+	@JoinColumn(name = "userid")	
 	private User user;
 	
 	@OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade=CascadeType.REMOVE)
