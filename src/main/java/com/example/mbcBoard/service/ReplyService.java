@@ -1,7 +1,5 @@
 package com.example.mbcBoard.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +31,16 @@ public class ReplyService {
 		reply.setUser(userRepository.findById(userId).get());
 		
 		replyRepository.save(reply);
+	}
+	
+	@Transactional
+	public void deleteReply(int id) {
+		replyRepository.deleteById(id);
+	}
+	
+	public boolean authUser(int id, int request) {
+		Reply reply = replyRepository.findById(id).get();
+		return reply.getUser().getId()==request;
 	}
 	
 }

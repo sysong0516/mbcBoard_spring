@@ -12,14 +12,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.mbcBoard.domain.ResponseDTO;
 import com.example.mbcBoard.domain.RoleType;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.jwt.JwtService;
+import com.example.mbcBoard.security.SecurityUtil;
 import com.example.mbcBoard.service.UserService;
 
 import jakarta.validation.Valid;
@@ -31,6 +32,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private SecurityUtil securityUtil;	
 	
 	private final JwtService jwtService;
 	
@@ -68,5 +72,10 @@ public class UserController {
 					.header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt)
 					.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
 					.build();
+	}
+	
+	@GetMapping("/userInfo")
+	public ResponseEntity<?> info(Authentication auth){
+		return new ResponseEntity<>(securityUtil.getCurrentUser(auth).getId(),HttpStatus.OK);
 	}
 }
