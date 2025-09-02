@@ -1,5 +1,7 @@
 package com.example.mbcBoard.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +15,6 @@ public interface PostRepository extends JpaRepository<Post, Integer>{
 	Page<Post> findByTitleContaining(String keyword, Pageable pageable);
 	Page<Post> findByContentContaining(String keyword, Pageable pageable);
 	Page<Post> findByUser_UsernameContaining(String keyword, Pageable pageable);
+	
+	List<Post> findTop5ByOrderByLikesDesc();
 }
