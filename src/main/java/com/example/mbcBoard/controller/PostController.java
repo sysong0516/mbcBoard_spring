@@ -21,13 +21,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.mbcBoard.domain.Post;
+import com.example.mbcBoard.repository.PostRepository;
 import com.example.mbcBoard.service.PostService;
 
 @RestController
 public class PostController {
+
+    private final PostRepository postRepository;
 	
 	@Autowired
 	private PostService postService;
+
+    PostController(PostRepository postRepository) {
+        this.postRepository = postRepository;
+    }
 	
 	@PostMapping("/post/write") 
 	public ResponseEntity<?> insertPost(@RequestBody Post post, Authentication auth){
@@ -84,5 +91,11 @@ public class PostController {
             @RequestParam(defaultValue = "20") int size	
 	){
 		return postService.searchPost(type, keyword, page, size);
+	}
+	
+	@GetMapping("/post/top")
+	public ResponseEntity<?> bestPost(@RequestBody Post post){
+		postRepository.findTop5ByOrderByLikesDesc();
+		return new ResponseEntity<>("인기 게시글을 불러왔습니다.",HttpStatus.OK);
 	}
 }
