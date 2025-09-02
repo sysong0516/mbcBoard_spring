@@ -1,5 +1,6 @@
 package com.example.mbcBoard.domain;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ public class MessageDTO {
 	private int id;
 	private String content;
 	private User sender;
+	private Timestamp createDate;
 	private String receiverName;
 	
 	public static MessageDTO toDTO(Message message) {
@@ -22,6 +24,7 @@ public class MessageDTO {
 				message.getId(),
 				message.getContent(),
 				message.getSender(),
+				message.getCreateDate(),
 				message.getReceiver().getUsername()
 		);
 	}
