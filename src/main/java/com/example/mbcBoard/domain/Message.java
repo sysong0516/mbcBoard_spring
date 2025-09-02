@@ -1,5 +1,8 @@
 package com.example.mbcBoard.domain;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -27,6 +30,9 @@ public class Message {
 	
 	@Column(nullable = false)
 	private String content; // 메세지 내용
+	
+	@CreationTimestamp
+	private Timestamp createDate;
 	
 	@Column(nullable = false)
 	private boolean deletedBySender; // 보낸 메세지 삭제

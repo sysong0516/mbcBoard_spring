@@ -1,6 +1,9 @@
 package com.example.mbcBoard.repository;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -18,4 +21,8 @@ public interface PostRepository extends JpaRepository<Post, Integer>{
 	Page<Post> findByContentContaining(String keyword, Pageable pageable);
 	Page<Post> findByUser_UsernameContaining(String keyword, Pageable pageable);
 	
+<<<<<<< HEAD
+=======
+	List<Post> findTop5ByOrderByLikesDesc();
+>>>>>>> develop
 }
