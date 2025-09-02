@@ -31,7 +31,7 @@ public class User {
 	private String username; // 아이디
 	
 	@Column(nullable = false, length = 100)
-	@Size(min = 4, max = 10, message= "비밀번호는 4~10글자여야 합니다")
+	@Size(min = 4, max = 100, message= "비밀번호는 4~100글자여야 합니다")
 	@NotBlank(message = "비밀번호를 입력해주세요")
 	private String password; // 비밀번호
 	
