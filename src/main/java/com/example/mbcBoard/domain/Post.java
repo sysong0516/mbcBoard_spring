@@ -51,7 +51,7 @@ public class Post {
 	private User user;
 	
 	@OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade=CascadeType.REMOVE)
-	@OrderBy("id desc")
+	@OrderBy("id asc")
 	@JsonManagedReference
 	private List<Reply> replyList;
 }
