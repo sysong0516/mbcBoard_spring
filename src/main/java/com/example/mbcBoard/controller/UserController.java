@@ -1,6 +1,8 @@
 package com.example.mbcBoard.controller;
 
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +14,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.mbcBoard.domain.ResponseDTO;
 import com.example.mbcBoard.domain.RoleType;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.jwt.JwtService;
+import com.example.mbcBoard.repository.UserRepository;
+import com.example.mbcBoard.security.SecurityUtil;
 import com.example.mbcBoard.service.UserService;
 
 import jakarta.validation.Valid;
@@ -28,13 +32,20 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+
+    private final UserRepository userRepository;
 	
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private SecurityUtil securityUtil;	
+	
 	private final JwtService jwtService;
 	
 	private final AuthenticationManager authenticationManager;
+
+    
 	
 	@PostMapping("/signup")
 	public ResponseEntity<?> insertUser(@Valid @RequestBody User member, BindingResult bindingResult){
@@ -69,4 +80,13 @@ public class UserController {
 					.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
 					.build();
 	}
+	
+	@GetMapping("/userInfo")
+	public ResponseEntity<?> info(Authentication auth){
+		return new ResponseEntity<>(securityUtil.getCurrentUser(auth).getId(),HttpStatus.OK);
+	}
+	 @GetMapping("/userList")
+	    public List<User> getUserList() {
+	        return userRepository.findAll();
+	    }
 }

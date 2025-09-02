@@ -34,7 +34,7 @@ public class Reply {
 	private Timestamp createDate;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "userid")
+	@JoinColumn(name = "userid")	
 	private User user;
 	
 	@ManyToOne(fetch = FetchType.EAGER)

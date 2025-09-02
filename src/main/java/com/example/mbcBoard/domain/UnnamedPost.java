@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +45,7 @@ public class UnnamedPost {
 	private int likes;
 	
 	@OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade=CascadeType.REMOVE)
-	@OrderBy("id desc")
+	@OrderBy("id asc")
+	@JsonManagedReference
 	private List<UnnamedReply> replyList;
 }
