@@ -41,7 +41,7 @@ public class mbcBoardSecurityConfig {
 			)
 			.authorizeHttpRequests(auth -> 
 				auth.requestMatchers("/login", "/signup","/search").permitAll()
-					.requestMatchers(HttpMethod.GET,"/unnamed", "/post").permitAll()
+					.requestMatchers(HttpMethod.GET,"/unnamed/**", "/post").permitAll()
 					.requestMatchers("/ws/**").permitAll()
 					.anyRequest().authenticated()
 			);
