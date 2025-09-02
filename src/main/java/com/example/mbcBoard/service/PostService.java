@@ -1,6 +1,7 @@
 package com.example.mbcBoard.service;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import com.example.mbcBoard.domain.Post;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.domain.UserDTO;
 import com.example.mbcBoard.repository.PostRepository;
+import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.security.SecurityUtil;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -24,6 +26,9 @@ public class PostService {
 	
 	@Autowired
 	private PostRepository postRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Autowired
 	private SecurityUtil securityUtil;
@@ -75,13 +80,6 @@ public class PostService {
 		
 	}
 	
-	public Post getLikes(int id) {
-		Post postLikes = postRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-		postLikes.setLikes(postLikes.getLikes()+1);
-		postRepository.save(postLikes);
-		return postLikes;
-	}
-	
 	public Page<Post> searchPost(String type, String keyword, int page, int size) {
 		// PageRequest : 데이터를 페이지 단위로 검색하고 결과를 제어하는데 사용하는 객체
 		// page : 몇 번째 페이지를 요청하는 지
@@ -100,5 +98,38 @@ public class PostService {
 				return Page.empty();
 		}
 	}
+	
+	@Transactional
+	public Map<String, Object> toggleLike(int postId, Authentication auth) {
+		UserDTO meDto = securityUtil.getCurrentUser(auth);
+		User me = userRepository.findById(meDto.getId()).get();
+		
+		
+		postRepository.findById(postId)
+				.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+		
+		 boolean liked;
+	        if (postRepository.existsByIdAndLikers_Id(postId, me.getId())) {
+	            // 이미 눌렀으면 취소
+	            postRepository.deleteLikerLink(postId, me.getId()); // 조인 테이블에서 바로 삭제
+	            liked = false;
+	        } else {
+	            // 아직 안 눌렀으면 추가 (컬렉션에 add → 조인 테이블 insert)
+	            Post ref = postRepository.getReferenceById(postId); // 엔티티 전체 로딩 없이 프록시 참조
+	            ref.getLikers().add(me);
+	            liked = true;
+	        }
+
+	        long count = postRepository.countLikers(postId);
+	        Map<String, Object> res = new HashMap<>();
+	        res.put("liked", liked);
+	        res.put("likeCount", count);
+	        return res;
+	}
+	
+	@Transactional(readOnly = true)
+    public long likeCount(int postId) {
+        return postRepository.countLikers(postId);
+    }
 	
 }
