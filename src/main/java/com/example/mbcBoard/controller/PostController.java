@@ -1,6 +1,7 @@
 package com.example.mbcBoard.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +61,9 @@ public class PostController {
 	}
 	
 	@GetMapping("/postlike")
-	public ResponseEntity<?> getPostLike(int id) {
-		Post post = postService.getLikes(id);
-		return new ResponseEntity<>(post,HttpStatus.OK);
+	public ResponseEntity<?> getPostLike(int postId) {
+		long count = postService.likeCount(postId);
+		return new ResponseEntity<>(count,HttpStatus.OK);
 	}
 	
 	@PostMapping("/authpost")
@@ -93,9 +94,10 @@ public class PostController {
 		return postService.searchPost(type, keyword, page, size);
 	}
 	
-	@GetMapping("/post/top")
-	public ResponseEntity<?> bestPost(@RequestBody Post post){
-		postRepository.findTop5ByOrderByLikesDesc();
-		return new ResponseEntity<>("인기 게시글을 불러왔습니다.",HttpStatus.OK);
+	@PostMapping("/post/{id}/like") // 한 버튼으로 토글
+	public ResponseEntity<?> toggleLike(@PathVariable int id, Authentication auth) {
+	    Map<String, Object> body = postService.toggleLike(id, auth);
+	    return new ResponseEntity<>(body, HttpStatus.OK);
 	}
+	
 }

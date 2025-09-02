@@ -1,5 +1,7 @@
 package com.example.mbcBoard.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +9,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,10 +44,16 @@ public class UnnamedController {
 		return new  ResponseEntity<>(unnamedPost, HttpStatus.OK);
 	}
 	
-	@GetMapping("/boardlike")
-	public ResponseEntity<?> getPostLike(int id) {
-		UnnamedPost unnamedlike = unnamedPostService.getLikes(id);
-		return new ResponseEntity<>(unnamedlike,HttpStatus.OK);
+	@GetMapping("/unnamedlike")
+	public ResponseEntity<?> getPostLike(int postId) {
+		long count = unnamedPostService.likeCount(postId);
+		return new ResponseEntity<>(count,HttpStatus.OK);
+	}
+	
+	@PostMapping("/unnamed/{id}/like") // 한 버튼으로 토글
+	public ResponseEntity<?> toggleLike(@PathVariable int id, Authentication auth) {
+	    Map<String, Object> body = unnamedPostService.toggleLike(id, auth);
+	    return new ResponseEntity<>(body, HttpStatus.OK);
 	}
 	
 	
