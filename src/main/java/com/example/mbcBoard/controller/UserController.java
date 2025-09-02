@@ -1,6 +1,8 @@
 package com.example.mbcBoard.controller;
 
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mbcBoard.domain.RoleType;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.jwt.JwtService;
+import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.security.SecurityUtil;
 import com.example.mbcBoard.service.UserService;
 
@@ -29,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+
+    private final UserRepository userRepository;
 	
 	@Autowired
 	private UserService userService;
@@ -39,6 +44,8 @@ public class UserController {
 	private final JwtService jwtService;
 	
 	private final AuthenticationManager authenticationManager;
+
+    
 	
 	@PostMapping("/signup")
 	public ResponseEntity<?> insertUser(@Valid @RequestBody User member, BindingResult bindingResult){
@@ -78,4 +85,8 @@ public class UserController {
 	public ResponseEntity<?> info(Authentication auth){
 		return new ResponseEntity<>(securityUtil.getCurrentUser(auth).getId(),HttpStatus.OK);
 	}
+	 @GetMapping("/userList")
+	    public List<User> getUserList() {
+	        return userRepository.findAll();
+	    }
 }
