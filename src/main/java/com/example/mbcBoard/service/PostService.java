@@ -1,6 +1,8 @@
 package com.example.mbcBoard.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.mbcBoard.domain.Post;
+import com.example.mbcBoard.domain.PostLikeCount;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.domain.UserDTO;
 import com.example.mbcBoard.repository.PostRepository;
+import com.example.mbcBoard.repository.ReplyRepository;
 import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.security.SecurityUtil;
 
@@ -23,6 +27,8 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PostService {
+
+    private final ReplyRepository replyRepository;
 	
 	@Autowired
 	private PostRepository postRepository;
@@ -32,6 +38,10 @@ public class PostService {
 	
 	@Autowired
 	private SecurityUtil securityUtil;
+
+    PostService(ReplyRepository replyRepository) {
+        this.replyRepository = replyRepository;
+    }
 	
 	public void insertPost(Post post, Authentication auth) {
 		UserDTO dto = securityUtil.getCurrentUser(auth);
@@ -132,4 +142,12 @@ public class PostService {
         return postRepository.countLikers(postId);
     }
 	
+	public List<Post> getBestPost(){
+		 List<PostLikeCount> bestPostCount = postRepository.findPostLikeCounts();
+		 List<Post> bestPost=new ArrayList<>();
+		 for(PostLikeCount like:bestPostCount) {
+			 bestPost.add(postRepository.findById(like.getPost_id()).get());
+		 }
+		 return bestPost;
+	}
 }

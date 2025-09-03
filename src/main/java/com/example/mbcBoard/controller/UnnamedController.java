@@ -1,5 +1,7 @@
 package com.example.mbcBoard.controller;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.mbcBoard.domain.Post;
 import com.example.mbcBoard.domain.UnnamedPost;
 import com.example.mbcBoard.service.UnnamedPostService;
 
@@ -55,6 +56,12 @@ public class UnnamedController {
 	    Map<String, Object> body = unnamedPostService.toggleLike(id, auth);
 	    return new ResponseEntity<>(body, HttpStatus.OK);
 	}
-	
+	@GetMapping("/unnamedBest")
+	public ResponseEntity<?> best(){
+		Map<String, List<UnnamedPost>> best = new HashMap<>();
+		best.put("content", unnamedPostService.getBestPost());
+		
+		return new ResponseEntity<>(best,HttpStatus.OK);
+	}
 	
 }

@@ -1,5 +1,7 @@
 package com.example.mbcBoard.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.mbcBoard.domain.Post;
+import com.example.mbcBoard.domain.PostLikeCount;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer>{
@@ -28,5 +31,13 @@ public interface PostRepository extends JpaRepository<Post, Integer>{
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query(value = "delete from post_liker where post_id = :postId and user_id = :userId", nativeQuery = true)
     int deleteLikerLink(@Param("postId") Integer postId, @Param("userId") Integer userId);
-
+    
+    @Query(value = "SELECT post_id as postId, COUNT(post_id) as duplicates " +
+            "FROM post_liker " +
+            "GROUP BY post_id " +
+            "ORDER BY duplicates DESC "+
+            "LIMIT 5",
+    nativeQuery = true)
+   List<PostLikeCount> findPostLikeCounts();
+    
 }
