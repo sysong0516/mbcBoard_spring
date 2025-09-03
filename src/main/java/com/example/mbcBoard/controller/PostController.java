@@ -100,4 +100,12 @@ public class PostController {
 	    return new ResponseEntity<>(body, HttpStatus.OK);
 	}
 	
+	@GetMapping("/best")
+	public ResponseEntity<?> best(){
+		Map<String, List<Post>> best = new HashMap<>();
+		best.put("content", postService.getBestPost());
+		
+		return new ResponseEntity<>(best,HttpStatus.OK);
+	}
+	
 }

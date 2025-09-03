@@ -1,6 +1,8 @@
 package com.example.mbcBoard.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.mbcBoard.domain.Post;
+import com.example.mbcBoard.domain.PostLikeCount;
 import com.example.mbcBoard.domain.UnnamedPost;
 import com.example.mbcBoard.domain.User;
 import com.example.mbcBoard.domain.UserDTO;
@@ -81,5 +83,14 @@ public class UnnamedPostService {
     public long likeCount(int postId) {
         return unnamedPostRepository.countLikers(postId);
     }
+	
+	public List<UnnamedPost> getBestPost(){
+		List<PostLikeCount> bestCount = unnamedPostRepository.findPostLikeCounts();
+		List<UnnamedPost> best = new ArrayList<>();
+		for(PostLikeCount like:bestCount) {
+			best.add(unnamedPostRepository.findById(like.getPost_id()).get());
+		}
+		return best;
+	}
 	
 }
