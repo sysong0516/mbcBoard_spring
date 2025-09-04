@@ -25,6 +25,8 @@ import com.example.mbcBoard.domain.Post;
 import com.example.mbcBoard.repository.PostRepository;
 import com.example.mbcBoard.service.PostService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 public class PostController {
 
@@ -51,12 +53,12 @@ public class PostController {
 	}
 	
 	@GetMapping("/post/{id}")
-	public ResponseEntity<?> getPost(@PathVariable int id, Authentication auth){
-		Post post = postService.getPost(id);
-		boolean isOwer = postService.authPost(auth, post);
+	public ResponseEntity<?> getPost(@PathVariable int id, Authentication auth, HttpSession session){
+		Post post = postService.getPost(id,session);
+		boolean isOwner = postService.authPost(auth, post);
 		Map<String,Object> postUser = new HashMap<>();
 		postUser.put("post",post);
-		postUser.put("isOwer",isOwer);
+		postUser.put("isOwner",isOwner);
 		return new ResponseEntity<>(postUser,HttpStatus.OK);
 	}
 	

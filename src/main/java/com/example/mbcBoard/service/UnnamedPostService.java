@@ -2,8 +2,10 @@ package com.example.mbcBoard.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.security.SecurityUtil;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class UnnamedPostService {
@@ -45,9 +48,19 @@ public class UnnamedPostService {
 	}
 	
 	@Transactional
-	public UnnamedPost getBoard(int id) {
+	public UnnamedPost getBoard(int id, HttpSession session) {
 		UnnamedPost board = unnamedPostRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없십니다."));
-		board.setCnt(board.getCnt()+1);
+		
+		@SuppressWarnings("unchecked")
+		Set<Integer> viewed = (Set<Integer>) session.getAttribute("viewedPosts");
+		if(viewed == null) viewed = new HashSet<>();
+		
+		if(!viewed.contains(id)) {
+			board.setCnt(board.getCnt()+1);
+			viewed.add(id);
+			session.setAttribute("viewedPosts", viewed);
+		}
+		
 		return board;
 	}
 	
