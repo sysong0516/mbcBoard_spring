@@ -2,8 +2,10 @@ package com.example.mbcBoard.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import com.example.mbcBoard.repository.UserRepository;
 import com.example.mbcBoard.security.SecurityUtil;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class PostService {
@@ -63,9 +66,19 @@ public class PostService {
 	}
 	
 	@Transactional
-	public Post getPost(int id) {
+	public Post getPost(int id, HttpSession session) {
 		Post post = findPost(id);
-		post.setCnt(post.getCnt() + 1);
+		
+		@SuppressWarnings("unchecked")
+		Set<Integer> viewed = (Set<Integer>) session.getAttribute("viewedPosts");
+		if(viewed == null) viewed = new HashSet<>();
+		
+		if(!viewed.contains(id)) {
+			post.setCnt(post.getCnt() + 1);;
+			viewed.add(id);
+			session.setAttribute("viewedPosts", viewed);
+		}
+				
 		return post;
 	}
 	

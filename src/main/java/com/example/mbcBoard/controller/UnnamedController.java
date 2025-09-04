@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mbcBoard.domain.UnnamedPost;
 import com.example.mbcBoard.service.UnnamedPostService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 public class UnnamedController {
 
@@ -40,8 +42,8 @@ public class UnnamedController {
 	}
 	
 	@GetMapping("/unnamed/{id}")
-	public ResponseEntity<?> getBoard(@PathVariable int id) {
-		UnnamedPost unnamedPost = unnamedPostService.getBoard(id);
+	public ResponseEntity<?> getBoard(@PathVariable int id, HttpSession session) {
+		UnnamedPost unnamedPost = unnamedPostService.getBoard(id, session);
 		return new  ResponseEntity<>(unnamedPost, HttpStatus.OK);
 	}
 	
